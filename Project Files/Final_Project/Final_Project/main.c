@@ -20,15 +20,23 @@ unsigned long _avr_timer_M = 1;
 unsigned long _avr_timer_cntcurr = 0;
 
 //Globals
+unsigned char seed = 1;
 unsigned char gameOn = 0;
 unsigned char gameEnd = 0;
 unsigned char win = 0;
 unsigned char timerOn = 0;
-unsigned char puzzleComplete = 1;
+unsigned char lives = 3;
+unsigned char puzzleComplete = 0;
 unsigned char puzzlesFinished = 5;
 unsigned char totalPuzzles = 5;
+unsigned char difficulty = 0;
+unsigned char ticks = 30;
+unsigned char time_till_shift = 5;
 unsigned char sequence[5] = {0, 0, 0, 0, 0};
+unsigned char models[3] = {'A', 'B', 'X'};
+unsigned char des_model;
 unsigned char tempD;
+unsigned char keypad_in_use = 0;
 
 //Task Setup
 
@@ -51,20 +59,50 @@ void t_data(unsigned char data){	int i;	for(i = 7; i >= 0; --i) {		//for (i =
 	// clears all lines in preparation of a new transmission
 	PORTC = 0x00;}	
 
-enum SM1_States { SM1_Menu, SM1_Start, SM1_Win } SM1_State;
+enum SM1_States { SM1_Menu, SM1_Start, SM1_Set_Difficulty, SM1_Win } SM1_State;
 int TickFct_Menu(int state) {
 	/*VARIABLES MUST BE DECLARED STATIC*/
 	/*e.g., static int x = 0;*/
 	/*Define user variables for this state machine here. No functions; make them global.*/
+    static unsigned char model_num;
+	static unsigned char start = 0;
+	static unsigned char key_input = 0;
+	static unsigned char set_difficulty = 0;
 
 	switch(state) { // Transitions
 		case -1:
 		state = SM1_Menu;
+		LCD_DisplayString(1, "A. Play         B. Difficulty");
 		break;
 		case SM1_Menu:
-		if (1) {
+		if (start == 1) {
 			state = SM1_Start;
+			//Initialization
+			srand(seed);
+			model_num = rand() % 3;
+			des_model = models[model_num];
+			if(difficulty == 0)
+			{
+				ticks = 60;
+				time_till_shift = 10;
+				lives = 3;
+			}
+			else if(difficulty == 1)
+			{
+				ticks = 12;
+				time_till_shift = 2;
+				lives = 1;
+			}
+			if(USART_IsSendReady(0))
+			{
+				USART_Send(des_model, 0); //Code for GameStart
+			}
 			LCD_ClearScreen();
+		}
+		else if(set_difficulty == 1)
+		{
+			state = SM1_Set_Difficulty;
+			LCD_DisplayString(1, "A. Normal       B. Hard");
 		}
 		break;
 		case SM1_Start:
@@ -75,6 +113,17 @@ int TickFct_Menu(int state) {
 			state = SM1_Win;
 		}
 		break;
+		case SM1_Set_Difficulty:
+		if(set_difficulty == 0)
+		{
+			state = SM1_Menu;
+			LCD_DisplayString(1, "A. Play         B. Difficulty");
+		}
+		else
+		{
+			state = SM1_Set_Difficulty;
+		}
+		break;
 		case SM1_Win:
 		break;
 		default:
@@ -83,12 +132,27 @@ int TickFct_Menu(int state) {
 
 	switch(state) { // State actions
 		case SM1_Menu:
-		LCD_DisplayString(1, "A. Play");
-		LCD_DisplayString(17, "B. Difficulty");
+		key_input = GetKeypadKey();
+
+		switch (key_input) {
+			case '\0': break; // All 5 LEDs on
+			case 'A': start = 1; break;
+			case 'B': set_difficulty = 1; break;
+			default: break;
+			}
 		break;
 		case SM1_Start:
 		//LCD_DisplayString(1, "Game Start!");
 		gameOn = 1;
+		break;
+		case SM1_Set_Difficulty:
+		key_input = GetKeypadKey();
+		switch (key_input) {
+			case '\0': break; // All 5 LEDs on
+			case 'A': difficulty = 0; set_difficulty = 0; break;
+			case 'B': difficulty = 1; set_difficulty = 0; break;
+			default: break;
+		}
 		break;
 		case SM1_Win:
 		LCD_DisplayString(1, "You win!");
@@ -105,11 +169,18 @@ int TickFct_Timer(int state) {
 	/*VARIABLES MUST BE DECLARED STATIC*/
 	/*e.g., static int x = 0;*/
 	static unsigned char t = 0;
-	static unsigned char ticks = 30;
 	static unsigned char shift_val = 0x7F;
 	switch(state) { // Transitions
 		case SM2_Init:
-		state = SM2_Tick;
+		if(gameOn == 1)
+		{
+			state = SM2_Tick;
+		}
+		else
+		{
+			state = SM2_Init;
+		}
+
 		break;
 		case SM2_Tick:
 		if (t < 150) {
@@ -129,7 +200,7 @@ int TickFct_Timer(int state) {
 		ticks = 30;
 		break;
 		case SM2_Tick:
-		if(t % 5 == 0)
+		if(t % time_till_shift == 0)
 		{
 			shift_val = shift_val >> 1;
 			t_data(shift_val);
@@ -138,7 +209,7 @@ int TickFct_Timer(int state) {
 		if(t == ticks){
 			if(USART_IsSendReady(0))
 			{
-				USART_Send(0x01, 0);
+				USART_Send(0x02, 0); //Code for GameEnd
 				LCD_DisplayString(1, "Game Over!");
 			}
 				gameEnd = 1;
@@ -155,26 +226,37 @@ enum SM3_States { SM3_Init, SM3_Pick, SM3_Input, SM3_Complete } SM3_State;
 int TickFct_Light_Catch(int state) {
 	//VARIABLES MUST BE DECLARED STATIC
 	//e.g., static int x = 0;
-	static unsigned char choices[3] = {0x04, 0x08, 0x10};
+	static unsigned char choices[3] = {0x40, 0x20, 0x10}; //0x10 = Red 0x20 = Green 0x40 = Blue
 	static unsigned char inputs[3] = {7,6,5};
 	static unsigned char t = 0;
 	static unsigned char i = 0;
+	static unsigned char finished = 0;
+	static unsigned char key_input;
 	switch(state) { // Transitions
 		case -1:
 		state = SM3_Init;
 		break;
 		case SM3_Init:
-		if (1) {
+		if (gameOn == 1) {
 			state = SM3_Pick;
+		}
+		else
+		{
+			state = SM3_Init;
 		}
 		break;
 		case SM3_Pick:
-		if (1) {
+		if(finished == 1)
+		{
+			state = SM3_Complete;
+			puzzleComplete = 1;
+		}
+		else{
 			state = SM3_Input;
 		}
 		break;
 		case SM3_Input:
-		if(GetBit(tempD, 4) == 1)
+		if(0)
 		{
 			state = SM3_Complete;
 		}
@@ -194,15 +276,44 @@ int TickFct_Light_Catch(int state) {
 		i = 0;
 		break;
 		case SM3_Pick:
+		key_input = GetKeypadKey();
+		if(keypad_in_use == 0)
+		{
+			switch (key_input) {
+				case '\0': break; // All 5 LEDs on
+				case 'C':
+				if(choices[i] == 0x10 && des_model == 'A')
+				{
+					//puzzleComplete = 1;
+					finished = 1;
+				}
+				else if (choices[i] == 0x20 && des_model == 'B')
+				{
+					//puzzleComplete = 1;
+					finished = 1;
+				}
+				else if (choices[i] == 0x40 && des_model == 'C')
+				{
+					//puzzleComplete = 1;
+					finished = 1;
+				}
+				else
+				{
+					LCD_DisplayString(1, "Incorrect!");
+				}
+				break;
+
+				default: break;
+			}
+		}
 		i = rand() % 3;
 		PORTD = choices[i];
+
 		
 		break;
 		case SM3_Input:
 		break;
 		case SM3_Complete:
-		//LCD_DisplayString(1, "Puzzle Complete!");
-		//puzzleComplete = 1;
 		default: // ADD default behaviour below
 		break;
 	} // State actions
@@ -253,7 +364,7 @@ int TickFct_Key_Gen(int state) {
 		case SM4_Wait:
 		if(USART_HasReceived(1))
 		{
-			unsigned char val = USART_Receive(1);
+			unsigned char val = USART_Receive(1); //TO DO: Account for failed attempts?
 			puzzleComplete = 1;
 			USART_Flush(1);
 			
@@ -265,9 +376,7 @@ int TickFct_Key_Gen(int state) {
 		puzzleComplete = 0;
 		LCD_DisplayString(1, "Puzzle Done!    Code:");
 		LCD_WriteData(sequence[i]);
-		LCD_WriteData(sequence[1]);
 		i++;
-		
 		break;
 		case SM4_Init:
 		i = 0;
@@ -307,6 +416,7 @@ int TickFct_Key_Input(int state) {
 		if (input == 1) {
 			state = SM5_Input;
 			LCD_DisplayString(1, "Input Code:");
+			keypad_in_use = 1;
 		}
 		else if (inspect == 1) {
 			state = SM5_Inspect;
@@ -334,6 +444,7 @@ int TickFct_Key_Input(int state) {
 				input = 0;
 				index = 0;
 				correct = 1;
+				keypad_in_use = 0;
 				state = SM5_Wait;
 			}
 		}
@@ -390,7 +501,8 @@ int TickFct_Key_Input(int state) {
 		}
 		break;
 		case SM5_Inspect:
-		LCD_DisplayString(1, "Details Here.");
+		LCD_DisplayString(1, "Model:");
+		LCD_WriteData(des_model);
 		break;
 		case SM5_Win:
 		win = 1;
@@ -474,7 +586,7 @@ int main(void)
 	DDRB = 0xF0; PORTB = 0x0F; // PB7..4 outputs init 0s, PB3..0 inputs init 1s
 	DDRC = 0xEF; PORTC = 0x10;
 	//DDRD = 0xFF; PORTD = 0x00;
-	DDRD = 0x1F; PORTD = 0xE0;
+	DDRD = 0xFF; PORTD = 0x00;
 	//Period for the tasks
 	unsigned long int SMTick1_calc = 200;
 
@@ -488,7 +600,7 @@ int main(void)
 	unsigned long int SMTick1_period = SMTick1_calc/GCD;
 
 	// Task 1
-	task1.state = SM1_Menu;//Task initial state.
+	task1.state = -1;//Task initial state.
 	task1.period = 10;//Task Period.
 	task1.elapsedTime = 0;//Task current elapsed time.
 	task1.TickFct = &TickFct_Menu;//Function pointer for the tick.
@@ -522,7 +634,7 @@ int main(void)
 	TimerSet(10);
 	TimerOn();
 	LCD_init();
-	srand(6);
+	srand(seed);
 
 	/*while(1)
 	{
@@ -551,6 +663,7 @@ int main(void)
 		}
 		while(!TimerFlag);
 		TimerFlag = 0;
+		seed = seed + 10;
 
     }
 }

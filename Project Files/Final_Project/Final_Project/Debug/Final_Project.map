@@ -34,6 +34,7 @@ c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/..
 Allocating common symbols
 Common symbol       size              file
 
+des_model           0x1               main.o
 SM3_State           0x1               main.o
 SM1_State           0x1               main.o
 SM4_State           0x1               main.o
@@ -87,8 +88,6 @@ Discarded input sections
  .bss           0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_udivmodqi4.o)
  .text.libgcc.mul
                 0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_udivmodqi4.o)
- .text.libgcc.div
-                0x00000000       0x18 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_udivmodqi4.o)
  .text.libgcc   0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_udivmodqi4.o)
  .text.libgcc.prologue
                 0x00000000        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_udivmodqi4.o)
@@ -401,7 +400,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000      0xd2e
+.text           0x00000000      0xef0
  *(.vectors)
  .vectors       0x00000000       0x8c C:/Program Files (x86)/Atmel/Studio/7.0/Packs/atmel/ATmega_DFP/1.0.98/gcc/dev/atmega1284/avr51/crtatmega1284.o
                 0x00000000                __vector_default
@@ -517,83 +516,86 @@ END GROUP
  .text.LCD_DisplayString
                 0x0000018e       0x32 io.o
                 0x0000018e                LCD_DisplayString
- .text.TickFct_Menu
-                0x000001c0       0x5e main.o
-                0x000001c0                TickFct_Menu
- .text.TickFct_Light_Catch
-                0x0000021e       0x6e main.o
-                0x0000021e                TickFct_Light_Catch
  .text.GetKeypadKey
-                0x0000028c       0xd2 main.o
-                0x0000028c                GetKeypadKey
+                0x000001c0       0xd2 main.o
+                0x000001c0                GetKeypadKey
+ .text.TickFct_Light_Catch
+                0x00000292       0xf6 main.o
+                0x00000292                TickFct_Light_Catch
  .text.TickFct_Key_Input
-                0x0000035e      0x35e main.o
-                0x0000035e                TickFct_Key_Input
+                0x00000388      0x370 main.o
+                0x00000388                TickFct_Key_Input
  .text.initUSART
-                0x000006bc       0x44 main.o
-                0x000006bc                initUSART
+                0x000006f8       0x44 main.o
+                0x000006f8                initUSART
  .text.USART_Flush
-                0x00000700       0x42 main.o
-                0x00000700                USART_Flush
+                0x0000073c       0x42 main.o
+                0x0000073c                USART_Flush
  .text.USART_Send
-                0x00000742       0x24 main.o
-                0x00000742                USART_Send
+                0x0000077e       0x24 main.o
+                0x0000077e                USART_Send
+ .text.TickFct_Menu
+                0x000007a2      0x152 main.o
+                0x000007a2                TickFct_Menu
  .text.USART_Receive
-                0x00000766       0x24 main.o
-                0x00000766                USART_Receive
+                0x000008f4       0x24 main.o
+                0x000008f4                USART_Receive
  .text.TickFct_Key_Gen
-                0x0000078a       0xc4 main.o
-                0x0000078a                TickFct_Key_Gen
- .text.t_data   0x0000084e       0x32 main.o
-                0x0000084e                t_data
+                0x00000918       0xbc main.o
+                0x00000918                TickFct_Key_Gen
+ .text.t_data   0x000009d4       0x32 main.o
+                0x000009d4                t_data
  .text.TickFct_Timer
-                0x00000880       0x8a main.o
-                0x00000880                TickFct_Timer
- .text.TimerOn  0x0000090a       0x48 main.o
-                0x0000090a                TimerOn
+                0x00000a06       0xa6 main.o
+                0x00000a06                TickFct_Timer
+ .text.TimerOn  0x00000aac       0x48 main.o
+                0x00000aac                TimerOn
  .text.__vector_13
-                0x00000952       0x78 main.o
-                0x00000952                __vector_13
- .text.main     0x000009ca      0x19c main.o
-                0x000009ca                main
+                0x00000af4       0x78 main.o
+                0x00000af4                __vector_13
+ .text.main     0x00000b6c      0x1a4 main.o
+                0x00000b6c                main
  .text.libgcc.div
-                0x00000b66       0x26 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_divmodhi4.o)
-                0x00000b66                _div
-                0x00000b66                __divmodhi4
+                0x00000d10       0x18 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_udivmodqi4.o)
+                0x00000d10                __udivmodqi4
  .text.libgcc.div
-                0x00000b8c       0x44 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_udivmodsi4.o)
-                0x00000b8c                __udivmodsi4
- .text.libgcc   0x00000bd0       0x12 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_tablejump2.o)
-                0x00000bd0                __tablejump2__
+                0x00000d28       0x26 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_divmodhi4.o)
+                0x00000d28                _div
+                0x00000d28                __divmodhi4
  .text.libgcc.div
-                0x00000be2       0x28 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_udivmodhi4.o)
-                0x00000be2                __udivmodhi4
+                0x00000d4e       0x44 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_udivmodsi4.o)
+                0x00000d4e                __udivmodsi4
+ .text.libgcc   0x00000d92       0x12 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_tablejump2.o)
+                0x00000d92                __tablejump2__
+ .text.libgcc.div
+                0x00000da4       0x28 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_udivmodhi4.o)
+                0x00000da4                __udivmodhi4
  .text.avr-libc
-                0x00000c0a       0xaa c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/../../../../avr/lib/avr51\libc.a(rand.o)
-                0x00000c96                rand_r
-                0x00000c98                rand
-                0x00000c9e                srand
+                0x00000dcc       0xaa c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/../../../../avr/lib/avr51\libc.a(rand.o)
+                0x00000e58                rand_r
+                0x00000e5a                rand
+                0x00000e60                srand
  .text.libgcc.div
-                0x00000cb4       0x28 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_divmodsi4.o)
-                0x00000cb4                __divmodsi4
+                0x00000e76       0x28 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_divmodsi4.o)
+                0x00000e76                __divmodsi4
  .text.libgcc.div
-                0x00000cdc       0x10 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_negsi2.o)
-                0x00000cdc                __negsi2
+                0x00000e9e       0x10 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_negsi2.o)
+                0x00000e9e                __negsi2
  .text.libgcc.mul
-                0x00000cec       0x14 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_muluhisi3.o)
-                0x00000cec                __muluhisi3
+                0x00000eae       0x14 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_muluhisi3.o)
+                0x00000eae                __muluhisi3
  .text.libgcc.mul
-                0x00000d00        0xc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_mulshisi3.o)
-                0x00000d00                __mulshisi3
-                0x00000d04                __mulohisi3
+                0x00000ec2        0xc c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_mulshisi3.o)
+                0x00000ec2                __mulshisi3
+                0x00000ec6                __mulohisi3
  .text.libgcc.mul
-                0x00000d0c       0x1e c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_umulhisi3.o)
-                0x00000d0c                __umulhisi3
-                0x00000d2a                . = ALIGN (0x2)
+                0x00000ece       0x1e c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_umulhisi3.o)
+                0x00000ece                __umulhisi3
+                0x00000eec                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x00000d2a        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_exit.o)
-                0x00000d2a                _exit
-                0x00000d2a                exit
+ .fini9         0x00000eec        0x0 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_exit.o)
+                0x00000eec                _exit
+                0x00000eec                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -612,107 +614,136 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x00000d2a        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_exit.o)
+ .fini0         0x00000eec        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/avr51\libgcc.a(_exit.o)
  *(.fini0)
-                0x00000d2e                _etext = .
+                0x00000ef0                _etext = .
 
-.data           0x00800100       0x92 load address 0x00000d2e
+.data           0x00800100       0xbc load address 0x00000ef0
                 0x00800100                PROVIDE (__data_start, .)
  *(.data)
  .data          0x00800100        0x4 c:/program files (x86)/atmel/studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/4.9.2/../../../../avr/lib/avr51\libc.a(rand.o)
  *(.data*)
- .data.correct.1865
+ .data.correct.1895
                 0x00800104        0x1 main.o
- .data.ticks.1791
+ .data.shift_val.1816
                 0x00800105        0x1 main.o
- .data.shift_val.1792
-                0x00800106        0x1 main.o
- .data.tasks    0x00800107        0xa main.o
-                0x00800107                tasks
- .data.totalPuzzles
-                0x00800111        0x1 main.o
-                0x00800111                totalPuzzles
- .data.puzzlesFinished
-                0x00800112        0x1 main.o
-                0x00800112                puzzlesFinished
- .data.puzzleComplete
+ .data.tasks    0x00800106        0xa main.o
+                0x00800106                tasks
+ .data.models   0x00800110        0x3 main.o
+                0x00800110                models
+ .data.time_till_shift
                 0x00800113        0x1 main.o
-                0x00800113                puzzleComplete
+                0x00800113                time_till_shift
+ .data.ticks    0x00800114        0x1 main.o
+                0x00800114                ticks
+ .data.totalPuzzles
+                0x00800115        0x1 main.o
+                0x00800115                totalPuzzles
+ .data.puzzlesFinished
+                0x00800116        0x1 main.o
+                0x00800116                puzzlesFinished
+ .data.lives    0x00800117        0x1 main.o
+                0x00800117                lives
+ .data.seed     0x00800118        0x1 main.o
+                0x00800118                seed
  .data._avr_timer_M
-                0x00800114        0x4 main.o
-                0x00800114                _avr_timer_M
+                0x00800119        0x4 main.o
+                0x00800119                _avr_timer_M
  *(.rodata)
  *(.rodata*)
  .rodata.str1.1
-                0x00800118       0x67 main.o
- .rodata.keys.1836
-                0x0080017f       0x10 main.o
- .rodata.choices.1810
-                0x0080018f        0x3 main.o
+                0x0080011d       0x8b main.o
+ .rodata.keys.1866
+                0x008001a8       0x10 main.o
+ .rodata.choices.1834
+                0x008001b8        0x3 main.o
  *(.gnu.linkonce.d*)
-                0x00800192                . = ALIGN (0x2)
-                0x00800192                _edata = .
-                0x00800192                PROVIDE (__data_end, .)
+                0x008001bc                . = ALIGN (0x2)
+ *fill*         0x008001bb        0x1 
+                0x008001bc                _edata = .
+                0x008001bc                PROVIDE (__data_end, .)
 
-.bss            0x00800192       0x5d
-                0x00800192                PROVIDE (__bss_start, .)
+.bss            0x008001bc       0x67
+                0x008001bc                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
- .bss.key_input.1864
-                0x00800192        0x1 main.o
- .bss.user_input.1863
-                0x00800193        0x5 main.o
- .bss.index.1866
-                0x00800198        0x1 main.o
- .bss.inspect.1868
-                0x00800199        0x1 main.o
- .bss.input.1867
-                0x0080019a        0x1 main.o
- .bss.sequence.1838
-                0x0080019b        0x5 main.o
- .bss.i.1837    0x008001a0        0x1 main.o
- .bss.key.1835  0x008001a1        0x1 main.o
- .bss.i.1813    0x008001a2        0x1 main.o
- .bss.t.1812    0x008001a3        0x1 main.o
- .bss.t.1790    0x008001a4        0x1 main.o
+ .bss.key_input.1894
+                0x008001bc        0x1 main.o
+ .bss.user_input.1893
+                0x008001bd        0x5 main.o
+ .bss.index.1896
+                0x008001c2        0x1 main.o
+ .bss.inspect.1898
+                0x008001c3        0x1 main.o
+ .bss.input.1897
+                0x008001c4        0x1 main.o
+ .bss.sequence.1868
+                0x008001c5        0x5 main.o
+ .bss.i.1867    0x008001ca        0x1 main.o
+ .bss.key.1865  0x008001cb        0x1 main.o
+ .bss.key_input.1839
+                0x008001cc        0x1 main.o
+ .bss.i.1837    0x008001cd        0x1 main.o
+ .bss.t.1836    0x008001ce        0x1 main.o
+ .bss.finished.1838
+                0x008001cf        0x1 main.o
+ .bss.t.1815    0x008001d0        0x1 main.o
+ .bss.key_input.1784
+                0x008001d1        0x1 main.o
+ .bss.set_difficulty.1785
+                0x008001d2        0x1 main.o
+ .bss.model_num.1782
+                0x008001d3        0x1 main.o
+ .bss.start.1783
+                0x008001d4        0x1 main.o
  .bss.dummy.1713
-                0x008001a5        0x1 main.o
- .bss.task5     0x008001a6        0xb main.o
- .bss.task4     0x008001b1        0xb main.o
- .bss.task3     0x008001bc        0xb main.o
- .bss.task2     0x008001c7        0xb main.o
- .bss.task1     0x008001d2        0xb main.o
- .bss.sequence  0x008001dd        0x5 main.o
-                0x008001dd                sequence
- .bss.win       0x008001e2        0x1 main.o
-                0x008001e2                win
- .bss.gameEnd   0x008001e3        0x1 main.o
-                0x008001e3                gameEnd
- .bss.gameOn    0x008001e4        0x1 main.o
-                0x008001e4                gameOn
+                0x008001d5        0x1 main.o
+ .bss.task5     0x008001d6        0xb main.o
+ .bss.task4     0x008001e1        0xb main.o
+ .bss.task3     0x008001ec        0xb main.o
+ .bss.task2     0x008001f7        0xb main.o
+ .bss.task1     0x00800202        0xb main.o
+ .bss.keypad_in_use
+                0x0080020d        0x1 main.o
+                0x0080020d                keypad_in_use
+ .bss.sequence  0x0080020e        0x5 main.o
+                0x0080020e                sequence
+ .bss.difficulty
+                0x00800213        0x1 main.o
+                0x00800213                difficulty
+ .bss.puzzleComplete
+                0x00800214        0x1 main.o
+                0x00800214                puzzleComplete
+ .bss.win       0x00800215        0x1 main.o
+                0x00800215                win
+ .bss.gameEnd   0x00800216        0x1 main.o
+                0x00800216                gameEnd
+ .bss.gameOn    0x00800217        0x1 main.o
+                0x00800217                gameOn
  .bss._avr_timer_cntcurr
-                0x008001e5        0x4 main.o
-                0x008001e5                _avr_timer_cntcurr
+                0x00800218        0x4 main.o
+                0x00800218                _avr_timer_cntcurr
  .bss.TimerFlag
-                0x008001e9        0x1 main.o
-                0x008001e9                TimerFlag
+                0x0080021c        0x1 main.o
+                0x0080021c                TimerFlag
  *(COMMON)
- COMMON         0x008001ea        0x5 main.o
-                0x008001ea                SM3_State
-                0x008001eb                SM1_State
-                0x008001ec                SM4_State
-                0x008001ed                SM5_State
-                0x008001ee                tempD
-                0x008001ef                PROVIDE (__bss_end, .)
-                0x00000d2e                __data_load_start = LOADADDR (.data)
-                0x00000dc0                __data_load_end = (__data_load_start + SIZEOF (.data))
+ COMMON         0x0080021d        0x6 main.o
+                0x0080021d                des_model
+                0x0080021e                SM3_State
+                0x0080021f                SM1_State
+                0x00800220                SM4_State
+                0x00800221                SM5_State
+                0x00800222                tempD
+                0x00800223                PROVIDE (__bss_end, .)
+                0x00000ef0                __data_load_start = LOADADDR (.data)
+                0x00000fac                __data_load_end = (__data_load_start + SIZEOF (.data))
 
-.noinit         0x008001ef        0x0
-                0x008001ef                PROVIDE (__noinit_start, .)
+.noinit         0x00800223        0x0
+                0x00800223                PROVIDE (__noinit_start, .)
  *(.noinit*)
-                0x008001ef                PROVIDE (__noinit_end, .)
-                0x008001ef                _end = .
-                0x008001ef                PROVIDE (__heap_start, .)
+                0x00800223                PROVIDE (__noinit_end, .)
+                0x00800223                _end = .
+                0x00800223                PROVIDE (__heap_start, .)
 
 .eeprom         0x00810000        0x0
  *(.eeprom*)
@@ -788,37 +819,37 @@ END GROUP
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x12de
+.debug_info     0x00000000     0x1458
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0x2c2 io.o
- .debug_info    0x000002c2     0x101c main.o
+ .debug_info    0x000002c2     0x1196 main.o
 
-.debug_abbrev   0x00000000      0x517
+.debug_abbrev   0x00000000      0x52f
  *(.debug_abbrev)
  .debug_abbrev  0x00000000       0xd9 io.o
- .debug_abbrev  0x000000d9      0x43e main.o
+ .debug_abbrev  0x000000d9      0x456 main.o
 
-.debug_line     0x00000000      0xcd0
+.debug_line     0x00000000      0xe1f
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x1e5 io.o
- .debug_line    0x000001e5      0xaeb main.o
+ .debug_line    0x000001e5      0xc3a main.o
 
-.debug_frame    0x00000000      0x2c8
+.debug_frame    0x00000000      0x2cc
  *(.debug_frame)
  .debug_frame   0x00000000       0x98 io.o
- .debug_frame   0x00000098      0x230 main.o
+ .debug_frame   0x00000098      0x234 main.o
 
-.debug_str      0x00000000      0x5f4
+.debug_str      0x00000000      0x669
  *(.debug_str)
  .debug_str     0x00000000      0x1b7 io.o
                                 0x1fd (size before relaxing)
- .debug_str     0x000001b7      0x43d main.o
-                                0x605 (size before relaxing)
+ .debug_str     0x000001b7      0x4b2 main.o
+                                0x685 (size before relaxing)
 
-.debug_loc      0x00000000      0xba1
+.debug_loc      0x00000000      0xc5d
  *(.debug_loc)
  .debug_loc     0x00000000      0x21a io.o
- .debug_loc     0x0000021a      0x987 main.o
+ .debug_loc     0x0000021a      0xa43 main.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -838,10 +869,10 @@ END GROUP
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x00000000      0x148
+.debug_ranges   0x00000000      0x168
  *(.debug_ranges)
  .debug_ranges  0x00000000       0x40 io.o
- .debug_ranges  0x00000040      0x108 main.o
+ .debug_ranges  0x00000040      0x128 main.o
 
 .debug_macro
  *(.debug_macro)
