@@ -23,6 +23,7 @@ unsigned long _avr_timer_cntcurr = 0;
 unsigned char tempA;
 unsigned char tempB;
 unsigned char model_num;
+unsigned char wrong = 0;
 
 void adc_init()
 {
@@ -92,12 +93,15 @@ void TimerSet(unsigned long M)
 	_avr_timer_cntcurr = _avr_timer_M;
 }
 
-	unsigned char choices[3] = {0x04, 0x08, 0x10};
-	unsigned char i;
 
 /****************************PUZZLE 1 LIGHT CATCH ********************************/
 
-enum SM1_States { SM1_Init, SM1_Pick, SM1_Wrong, SM1_Input,  } SM1_State;
+enum SM1_States { SM1_Init, SM1_Pick, SM1_Wrong, SM1_Input, SM1_Win  } SM1_State;
+
+	unsigned char choices[3] = {0x04, 0x08, 0x10};
+	unsigned char i;
+	unsigned char time = 0;
+	unsigned char correctLights = 10;
 
 void TickFct_State_machine_1() {
 
@@ -123,6 +127,26 @@ void TickFct_State_machine_1() {
 		}
 		break;
 		case SM1_Input:
+		if(numCorrect == correctLights)
+		{
+			SM1_State = SM1_Win;
+			PORTC = PORTC | 0x1C;
+			if(USART_IsSendReady(1))
+			{
+				USART_Send(0x01, 1);
+			}
+			break;
+		}
+		else if(model_num == 'B' || model_num == 'X')
+		{
+			time++;
+			if(time % 4 == 0)
+			{
+				SM1_State = SM1_Pick;
+				break;
+			}
+
+		}
 		if(tempA == choices[i])
 		{
 			SM1_State = SM1_Pick;
@@ -133,6 +157,7 @@ void TickFct_State_machine_1() {
 			SM1_State = SM1_Input;
 		}
 		else if (tempA != choices[i]) {
+			wrong = 1;
 			SM1_State = SM1_Wrong;
 			numCorrect = 0;
 		}
@@ -148,6 +173,8 @@ void TickFct_State_machine_1() {
 			t++;
 		}
 		break;
+		case SM1_Win:
+		break;
 		default:
 		SM1_State = SM1_Init;
 	} // Transitions
@@ -159,19 +186,7 @@ void TickFct_State_machine_1() {
 		case SM1_Pick:
 		srand(seed);
 		i = rand() % 3;
-
-		if(numCorrect == 5)
-		{
-			PORTC = PORTC | 0x1C;
-			if(USART_IsSendReady(1))
-			{
-				USART_Send(0x01, 1);
-			}
-		}
-		else
-		{
-				PORTC = PORTC & 0XE3 | choices[i];
-		}
+		PORTC = PORTC & 0XE3 | choices[i];
 		break;
 		case SM1_Input:
 		break;
@@ -180,6 +195,8 @@ void TickFct_State_machine_1() {
 		PORTC = PORTC | 0x1C; //masking done to account for simon says
 		else
 		PORTC = PORTC & 0xE3;
+		break;
+		case SM1_Win:
 		break;
 		default: // ADD default behaviour below
 		break;
@@ -190,6 +207,7 @@ void TickFct_State_machine_1() {
 /************************************PUZZLE 2 SIMON SAYS ********************************/
 unsigned char ss_sequences[4] = {0x02, 0x01, 0x20, 0x40};
 unsigned char buffer[4];
+unsigned char display[4];
 unsigned char i_index = 0;
 unsigned char b_index = 0;
 unsigned char c_index = 0;
@@ -199,6 +217,7 @@ unsigned char num_correct = 0;
 unsigned char req_correct = 4;
 unsigned char curr_length = 0;
 unsigned char length = 4;
+unsigned char offset = 0;
 
 //ADC Configuration
 unsigned short adc_result_0 = 0;
@@ -219,6 +238,10 @@ TickFct_Simon_Says() {
 		case SM2_Init:
 		if (tempA == 0x20 && gameOn == 1) {
 			SM2_State = SM2_Randomize;
+			if(model_num == 'X')
+			{
+				offset = 1;
+			}
 		}
 		else
 		{
@@ -289,14 +312,20 @@ TickFct_Simon_Says() {
 		srand(seed);
 		for(int i = 0; i < 4; i++)
 		{
-			int in = rand() % 4;
-			buffer[i] = ss_sequences[in];
+			int in = (rand() % 4);
+			int in_offset = in + offset;
+			if(in_offset == 4)
+			{
+				in_offset = 0;
+			}
+			display[i] = ss_sequences[in];
+			buffer[i] = ss_sequences[in_offset];
 		}
 		break;
 		case SM2_Flash:
 		if(timer == 20)
 		{
-			PORTC = PORTC & 0x1C | buffer[curr_length];
+			PORTC = PORTC & 0x1C | display[curr_length];
 			timer = 0;
 			curr_length++;
 			if(curr_length > length)
@@ -350,7 +379,9 @@ TickFct_Simon_Says() {
 			SM2_State = SM2_Select;
 		}
 		else
-		{
+		{	
+			num_correct = 0;
+			wrong = 1;
 			SM2_State = SM2_Wrong;
 		}
 		break;
@@ -363,7 +394,7 @@ TickFct_Simon_Says() {
 
 }
 
-enum SM3_States { SM3_Game } SM3_State;
+enum SM3_States { SM3_Game, SM3_Wrong } SM3_State;
 
 TickFct_GameController() {
 	/*VARIABLES MUST BE DECLARED STATIC*/
@@ -374,9 +405,16 @@ TickFct_GameController() {
 		SM3_State = SM3_Game;
 		break;
 		case SM3_Game:
-		if (1) {
+		if(wrong == 1)
+		{
+			SM3_State = SM3_Wrong;
+		}
+		else{
 			SM3_State = SM3_Game;
 		}
+		break;
+		case SM3_Wrong:
+		SM3_State = SM3_Game;
 		break;
 		default:
 		SM3_State = SM3_Game;
@@ -398,6 +436,13 @@ TickFct_GameController() {
 				gameOn = 0;
 			}
 			USART_Flush(0);
+		}
+		break;
+		case SM3_Wrong:
+		wrong = 0;
+		if(USART_IsSendReady(1))
+		{
+			USART_Send(0x02, 1);
 		}
 		break;
 		default: // ADD default behaviour below
@@ -435,8 +480,11 @@ TickFct_Wire_Pull() {
 			{
 				USART_Send(0x01, 1);
 			}
-			
 		}
+		else if (wirePulled == 2) {
+			SM4_State = SM4_Complete;
+			wrong = 1;
+		}	
 		break;
 		case SM4_Complete:
 		break;
@@ -447,15 +495,52 @@ TickFct_Wire_Pull() {
 	switch(SM4_State) { // State actions
 		case SM4_Init:
 		break;
-		case SM4_Check: //TO DO IMPLEMENT FUNCTIONALITY
-		if((tempB & 0x01) == 0x01)
+		case SM4_Check:
+		if(model_num == 'A') //Condition: Yellow and Black wires cannot be pulled out.
 		{
-			PORTC = 0xFF;
+			if(GetBit(tempB, 0) == 0 || GetBit(tempB, 3) == 0) //Fail Condition if the player pulls the wrong wire.
+			{
+				wirePulled = 2;
+			}
+			else if(tempB == 0x09) //Success Condition if the player pulls out the right set of wires.
+			{
+				wirePulled = 1;
+			}
 		}
-		else
+		else if(model_num == 'B') //Condition: Only the Red wire cannot be pulled out.
 		{
-			PORTC = 0x00;
+			if(GetBit(tempB, 1) == 0) //Fail Condition if the player pulls the wrong wire.
+			{
+				wirePulled = 2;
+			}
+			else if(tempB == 0x02) //Success Condition if the player pulls out the right set of wires.
+			{
+				wirePulled = 1;
+			}
 		}
+		else if(model_num == 'X') //Condition: The Black, White, and Yellow wires cannot be pulled out.
+		{
+			if(GetBit(tempB, 0) == 0 || GetBit(tempB, 2) == 0 || GetBit(tempB, 3) == 0) //Fail Condition if the player pulls the wrong wire.
+			{
+				wirePulled = 2;
+			}
+			else if(tempB == 0x0D) //Success Condition if the player pulls out the right set of wires.
+			{
+				wirePulled = 1;
+			}
+		}
+		else if(model_num == 'M') //Condition: The Blue and Yellow Wires cannot be pulled out.
+		{
+			if(GetBit(tempB, 0) == 0 || GetBit(tempB, 4) == 0) //Fail Condition if the player pulls the wrong wire.
+			{
+				wirePulled = 2;
+			}
+			else if(tempB == 0x11) //Success Condition if the player pulls out the right set of wires.
+			{
+				wirePulled = 1;
+			}
+		}
+
 		break;
 		case SM4_Complete:
 		break;

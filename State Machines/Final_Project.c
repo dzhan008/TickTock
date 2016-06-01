@@ -1,6 +1,6 @@
 /*
 This code was automatically generated using the Riverside-Irvine State machine Builder tool
-Version 2.7 --- 5/29/2016 19:34:55 PST
+Version 2.7 --- 6/1/2016 0:3:20 PST
 */
 
 #include "rims.h"
@@ -21,14 +21,16 @@ typedef struct task {
    int (*TickFct)(int);
 } task;
 
-task tasks[5];
+task tasks[7];
 
-const unsigned char tasksNum = 5;
+const unsigned char tasksNum = 7;
 const unsigned long periodMenu = 100;
 const unsigned long periodTimer = 1000;
 const unsigned long periodLight_Catch = 1000;
 const unsigned long periodKey_Gen = 1000;
 const unsigned long periodKey_Input = 1000;
+const unsigned long periodHackGame = 1000;
+const unsigned long periodSpeakers = 1000;
 
 const unsigned long tasksPeriodGCD = 100;
 
@@ -37,6 +39,8 @@ int TickFct_Timer(int state);
 int TickFct_Light_Catch(int state);
 int TickFct_Key_Gen(int state);
 int TickFct_Key_Input(int state);
+int TickFct_HackGame(int state);
+int TickFct_Speakers(int state);
 
 unsigned char processingRdyTasks = 0;
 void TimerISR() {
@@ -85,6 +89,18 @@ int main() {
    tasks[i].period = periodKey_Input;
    tasks[i].elapsedTime = tasks[i].period;
    tasks[i].TickFct = &TickFct_Key_Input;
+
+   ++i;
+   tasks[i].state = -1;
+   tasks[i].period = periodHackGame;
+   tasks[i].elapsedTime = tasks[i].period;
+   tasks[i].TickFct = &TickFct_HackGame;
+
+   ++i;
+   tasks[i].state = -1;
+   tasks[i].period = periodSpeakers;
+   tasks[i].elapsedTime = tasks[i].period;
+   tasks[i].TickFct = &TickFct_Speakers;
 
    ++i;
    TimerSet(tasksPeriodGCD);
@@ -392,6 +408,128 @@ static unsigned char numInputs;
          break;
    } // State actions
    SM5_State = state;
+   return state;
+}
+
+
+enum SM7_States { SM7_Init, SM7_Create_Field, SM7_Movement, SM7_Fail } SM7_State;
+int TickFct_HackGame(int state) {
+   /*VARIABLES MUST BE DECLARED STATIC*/
+/*e.g., static int x = 0;*/
+/*Define user variables for this state machine here. No functions; make them global.*/
+
+static unsigned char playerPos = 1;
+static unsigned char goal = 16;
+   switch(state) { // Transitions
+      case -1:
+         state = SM7_Init;
+         break;
+      case SM7_Init:
+         if (hackGame == 0) {
+            state = SM7_Init;
+         }
+         else if (hackGame == 1) {
+            state = SM7_Create_Field;
+            LCD_DisplayString(1, "Hacking Module...");
+         }
+         break;
+      case SM7_Create_Field:
+         if (1) {
+            state = SM7_Movement;
+         }
+         break;
+      case SM7_Movement:
+         if (playerPos == position_1[i] || playerPos == position_2[i] || playerPos == position_3[i]) {
+            state = SM7_Fail;
+         }
+         break;
+      case SM7_Fail:
+         if (1) {
+            state = SM7_Create_Field;
+         }
+         break;
+      default:
+         state = -1;
+      } // Transitions
+
+   switch(state) { // State actions
+      case SM7_Init:
+         break;
+      case SM7_Create_Field:
+         i = rand() % 5;
+         			LCD_Cursor(position_1[i]);
+         			LCD_WriteData('#');
+         			LCD_Cursor(position_2[i]);
+         			LCD_WriteData('#');
+         
+         LCD_Cursor(position_3[i]);
+         			LCD_WriteData('#');
+         
+         LCD_Cursor(goal);
+         			LCD_WriteData('1');
+         
+         playerPos = 0;
+         
+         LCD_Cursor(playerPos);
+         
+         
+         break;
+      case SM7_Movement:
+         //Movement Code Here
+         break;
+      case SM7_Fail:
+         LCD_DisplayString(1, "Failed!");
+         break;
+      default: // ADD default behaviour below
+         break;
+   } // State actions
+   SM7_State = state;
+   return state;
+}
+
+
+enum SM8_States { SM8_Init, SM8_Tick } SM8_State;
+int TickFct_Speakers(int state) {
+   /*VARIABLES MUST BE DECLARED STATIC*/
+/*e.g., static int x = 0;*/
+/*Define user variables for this state machine here. No functions; make them global.*/
+static unsigned short  t = 0;
+   switch(state) { // Transitions
+      case -1:
+         state = SM8_Init;
+         break;
+      case SM8_Init:
+         if (1) {
+            state = SM8_Tick;
+         }
+         break;
+      case SM8_Tick:
+         if (1) {
+            state = SM8_Tick;
+            t++;
+         }
+         break;
+      default:
+         state = -1;
+      } // Transitions
+
+   switch(state) { // State actions
+      case SM8_Init:
+         break;
+      case SM8_Tick:
+         if(t % 5 == 0)
+         {
+              PORTC = PORTC | 0x01
+         }
+         else
+         {
+            PORTC = PORTC & FE
+         }
+         break;
+      default: // ADD default behaviour below
+         break;
+   } // State actions
+   SM8_State = state;
    return state;
 }
 
